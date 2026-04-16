@@ -1,11 +1,17 @@
 import { AppShell } from '@/components/layout/AppShell';
 import { VisitForm } from '@/components/visits/VisitForm';
 
-export default function NewVisitPage() {
+export default function NewVisitPage({ searchParams }: { searchParams?: { patient_id?: string } }) {
   return (
     <AppShell>
       <h2>Nueva visita</h2>
-      <VisitForm initialVisit={{ visit_type: 'basal', visit_status: 'completada' }} />
+      <VisitForm
+        initialVisit={{
+          patient_id: searchParams?.patient_id ?? '',
+          visit_type: 'basal',
+          visit_status: 'pendiente'
+        }}
+      />
     </AppShell>
   );
 }

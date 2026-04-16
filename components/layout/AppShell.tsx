@@ -4,8 +4,8 @@ import type { ReactNode } from 'react';
 const links = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/patients', label: 'Pacientes' },
-  { href: '/visits/new', label: 'Nueva visita' },
-  { href: '/export', label: 'Exportación' }
+  { href: '/patients/new', label: 'Nuevo paciente' },
+  { href: '/visits/new', label: 'Nueva visita' }
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

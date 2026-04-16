@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FormField, TextAreaField } from '@/components/forms/FormField';
 import { FormSection } from '@/components/forms/FormSection';
-import { supabase } from '@/lib/supabaseClient';
+import { createVisit, updateVisit } from '@/lib/repositories/visitsRepo';
 import type { Visit, VisitType } from '@/types/db';
 
 interface VisitFormProps {
@@ -14,61 +15,109 @@ interface VisitFormProps {
 const visitTypes: VisitType[] = ['basal', 'm3', 'm6', 'm9', 'm12', 'extraordinaria'];
 
 export function VisitForm({ initialVisit = {}, visitId }: VisitFormProps) {
+  const router = useRouter();
   const [visit, setVisit] = useState<Partial<Visit>>(initialVisit);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
   const save = async () => {
+    setError('');
+    setSaving(true);
+
     const payload = {
       patient_id: visit.patient_id,
       visit_type: visit.visit_type,
+      visit_number: visit.visit_number,
+      scheduled_date: visit.scheduled_date,
       visit_date: visit.visit_date,
       visit_status: visit.visit_status,
-      notes: visit.notes,
-      extraordinary_reason: visit.extraordinary_reason
+      extraordinary_reason: visit.extraordinary_reason,
+      notes: visit.notes
     };
 
-    if (visitId) {
-      await supabase.from('visits').update(payload).eq('id', visitId);
-      return;
+    try {
+      if (visitId) {
+        await updateVisit(visitId, payload);
+        router.refresh();
+        return;
+      }
+
+      await createVisit(payload);
+      router.push(`/patients/${visit.patient_id}`);
+    } catch (saveError) {
+      setError(saveError instanceof Error ? saveError.message : 'No se pudo guardar la visita');
+    } finally {
+      setSaving(false);
     }
-
-    const { data } = await supabase.from('visits').insert(payload).select('*').single();
-    if (!data?.id) return;
-
-    await Promise.all([
-      supabase.from('clinical_assessments').insert({ visit_id: data.id }),
-      supabase.from('patient_reported_outcomes').insert({ visit_id: data.id }),
-      supabase.from('feasibility_metrics').insert({ visit_id: data.id })
-    ]);
   };
 
   return (
     <div className="grid">
-      <FormSection title="Datos generales">
-        <FormField label="ID paciente" value={visit.patient_id ?? ''} onChange={(e) => setVisit({ ...visit, patient_id: e.target.value })} />
+      <FormSection title="Datos de la visita">
+        <FormField
+          label="ID paciente"
+          value={visit.patient_id ?? ''}
+          onChange={(e) => setVisit({ ...visit, patient_id: e.target.value })}
+        />
+
         <label>
           <span className="small">Tipo de visita</span>
-          <select value={visit.visit_type ?? 'basal'} onChange={(e) => setVisit({ ...visit, visit_type: e.target.value as VisitType })}>
+          <select
+            value={visit.visit_type ?? 'basal'}
+            onChange={(e) => setVisit({ ...visit, visit_type: e.target.value as VisitType })}
+          >
             {visitTypes.map((value) => (
-              <option key={value} value={value}>{value}</option>
+              <option key={value} value={value}>
+                {value}
+              </option>
             ))}
           </select>
         </label>
-        <FormField label="Fecha visita" type="date" value={visit.visit_date ?? ''} onChange={(e) => setVisit({ ...visit, visit_date: e.target.value })} />
-        <FormField label="Estado" value={visit.visit_status ?? 'completada'} onChange={(e) => setVisit({ ...visit, visit_status: e.target.value })} />
-        <TextAreaField label="Notas" value={visit.notes ?? ''} onChange={(e) => setVisit({ ...visit, notes: e.target.value })} />
+
+        <FormField
+          label="Número de visita"
+          type="number"
+          value={visit.visit_number ?? ''}
+          onChange={(e) => setVisit({ ...visit, visit_number: Number(e.target.value) || null })}
+        />
+
+        <FormField
+          label="Fecha programada"
+          type="date"
+          value={visit.scheduled_date ?? ''}
+          onChange={(e) => setVisit({ ...visit, scheduled_date: e.target.value })}
+        />
+
+        <FormField
+          label="Fecha de visita"
+          type="date"
+          value={visit.visit_date ?? ''}
+          onChange={(e) => setVisit({ ...visit, visit_date: e.target.value })}
+        />
+
+        <FormField
+          label="Estado de visita"
+          value={visit.visit_status ?? 'pendiente'}
+          onChange={(e) => setVisit({ ...visit, visit_status: e.target.value })}
+        />
+
+        <FormField
+          label="Motivo extraordinaria"
+          value={visit.extraordinary_reason ?? ''}
+          onChange={(e) => setVisit({ ...visit, extraordinary_reason: e.target.value })}
+        />
+
+        <TextAreaField
+          label="Notas"
+          value={visit.notes ?? ''}
+          onChange={(e) => setVisit({ ...visit, notes: e.target.value })}
+        />
       </FormSection>
 
-      <FormSection title="Variables clínicas">
-        <p className="small" style={{ gridColumn: '1 / -1' }}>Bloque listo para extender con presión arterial, antropometría y bioquímica.</p>
-      </FormSection>
-      <FormSection title="Medicación y cambios"><p className="small" style={{ gridColumn: '1 / -1' }}>Bloque modular preparado para múltiples registros por visita.</p></FormSection>
-      <FormSection title="Adherencia y hábitos"><p className="small" style={{ gridColumn: '1 / -1' }}>Espacio para Morisky-Green, PREDIMED e IPAQ.</p></FormSection>
-      <FormSection title="Experiencia del paciente"><p className="small" style={{ gridColumn: '1 / -1' }}>IEXPAC, EQ-5D-5L y notas de autopercepción.</p></FormSection>
-      <FormSection title="Intervenciones farmacéuticas"><p className="small" style={{ gridColumn: '1 / -1' }}>Registro de intervención, dominio y resultado.</p></FormSection>
-      <FormSection title="Coordinación multidisciplinar"><p className="small" style={{ gridColumn: '1 / -1' }}>Eventos de coordinación y resolución.</p></FormSection>
-      <FormSection title="Factibilidad operativa"><p className="small" style={{ gridColumn: '1 / -1' }}>Tiempo, costes y observaciones del proceso.</p></FormSection>
-
-      <button onClick={save}>Guardar visita</button>
+      {error && <p style={{ color: '#b42318' }}>{error}</p>}
+      <button onClick={save} disabled={saving}>
+        {saving ? 'Guardando...' : 'Guardar visita'}
+      </button>
     </div>
   );
 }

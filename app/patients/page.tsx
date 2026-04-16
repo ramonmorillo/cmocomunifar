@@ -3,24 +3,37 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { supabase } from '@/lib/supabaseClient';
+import { listPatients } from '@/lib/repositories/patientsRepo';
+import { formatDate } from '@/lib/utils/date';
 import type { Patient } from '@/types/db';
 
 export default function PatientsPage() {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase.from('patients').select('*').order('inclusion_date', { ascending: false });
-      setPatients((data as Patient[]) ?? []);
+      try {
+        const data = await listPatients();
+        setPatients(data);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'No se pudo cargar el listado');
+      }
     };
+
     void load();
   }, []);
 
   return (
     <AppShell>
-      <div className="card">
-        <h2>Listado de pacientes</h2>
+      <div className="card grid">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ margin: 0 }}>Listado de pacientes</h2>
+          <Link href="/patients/new">Crear paciente</Link>
+        </div>
+
+        {error && <p style={{ color: '#b42318' }}>{error}</p>}
+
         <table>
           <thead>
             <tr>
@@ -35,8 +48,8 @@ export default function PatientsPage() {
             {patients.map((patient) => (
               <tr key={patient.id}>
                 <td>{patient.study_code}</td>
-                <td>{patient.inclusion_date}</td>
-                <td>{patient.pharmacy_site}</td>
+                <td>{formatDate(patient.inclusion_date)}</td>
+                <td>{patient.pharmacy_site ?? '—'}</td>
                 <td>{patient.recruitment_status}</td>
                 <td>
                   <Link href={`/patients/${patient.id}`}>Abrir ficha</Link>
