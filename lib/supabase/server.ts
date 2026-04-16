@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseEnv } from '@/lib/supabase/env';
 
-export function createSupabaseServerClient() {
-  const { url, anonKey } = getSupabaseEnv();
+const { url, anonKey } = getSupabaseEnv();
 
+export function createSupabaseServerClient() {
   return createClient(url, anonKey, {
     auth: {
       persistSession: false,

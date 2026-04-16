@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { routes } from '@/lib/routes';
 
 const links = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/patients', label: 'Pacientes' },
-  { href: '/patients/new', label: 'Nuevo paciente' },
-  { href: '/visits/new', label: 'Nueva visita' }
+  { href: routes.dashboard, label: 'Dashboard' },
+  { href: routes.patients, label: 'Pacientes' },
+  { href: routes.patientNew, label: 'Nuevo paciente' },
+  { href: routes.visitNew, label: 'Nueva visita' }
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
