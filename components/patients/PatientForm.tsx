@@ -63,6 +63,23 @@ function normalizeNullableText(value: string) {
   return cleaned.length ? cleaned : null;
 }
 
+function parseIsoDate(dateValue: string | null) {
+  if (!dateValue) return null;
+
+  return new Date(`${dateValue}T00:00:00.000Z`);
+}
+
+function isFutureDate(dateValue: string | null) {
+  const parsedDate = parseIsoDate(dateValue);
+
+  if (!parsedDate) return false;
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  return parsedDate > today;
+}
+
 export function PatientForm({ initialPatient = {} }: PatientFormProps) {
   const router = useRouter();
   const [patient, setPatient] = useState<CreatePatientInput>({ ...emptyPatient, ...initialPatient });
@@ -79,6 +96,45 @@ export function PatientForm({ initialPatient = {} }: PatientFormProps) {
 
     if (patient.age_at_inclusion !== null && patient.age_at_inclusion < 0) {
       setError('La edad en inclusión no puede ser negativa.');
+      return;
+    }
+
+    if (patient.age_at_inclusion !== null && !Number.isInteger(patient.age_at_inclusion)) {
+      setError('La edad en inclusión debe ser un número entero.');
+      return;
+    }
+
+    if (patient.age_at_inclusion !== null && patient.age_at_inclusion > 130) {
+      setError('La edad en inclusión no puede ser mayor de 130.');
+      return;
+    }
+
+    if (isFutureDate(patient.screening_date)) {
+      setError('La fecha de screening no puede ser futura.');
+      return;
+    }
+
+    if (isFutureDate(patient.inclusion_date)) {
+      setError('La fecha de inclusión no puede ser futura.');
+      return;
+    }
+
+    if (isFutureDate(patient.birth_date)) {
+      setError('La fecha de nacimiento no puede ser futura.');
+      return;
+    }
+
+    const screeningDate = parseIsoDate(patient.screening_date);
+    const inclusionDate = parseIsoDate(patient.inclusion_date);
+    const birthDate = parseIsoDate(patient.birth_date);
+
+    if (screeningDate && inclusionDate && screeningDate > inclusionDate) {
+      setError('La fecha de screening no puede ser posterior a la fecha de inclusión.');
+      return;
+    }
+
+    if (birthDate && inclusionDate && birthDate > inclusionDate) {
+      setError('La fecha de nacimiento no puede ser posterior a la fecha de inclusión.');
       return;
     }
 
