@@ -5,6 +5,10 @@ import type { Visit } from '@/types/db';
 const TABLE = 'visits';
 
 export type VisitInput = Omit<Visit, 'id'>;
+export type CreateVisitInput = Pick<
+  VisitInput,
+  'patient_id' | 'visit_type' | 'visit_number' | 'scheduled_date' | 'visit_date' | 'visit_status' | 'extraordinary_reason' | 'notes'
+>;
 
 export async function listVisitsByPatient(patientId: string) {
   const { data, error } = await supabase
@@ -27,8 +31,7 @@ export async function getVisitById(id: string) {
   return data as Visit;
 }
 
-// Estructura mínima preparada para siguiente bloque.
-export async function createVisit(input: Partial<VisitInput>) {
+export async function createVisit(input: CreateVisitInput) {
   const { data, error } = await supabase.from(TABLE).insert(input).select('*').single();
 
   throwIfSupabaseError(error);

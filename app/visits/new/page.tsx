@@ -8,8 +8,8 @@ export default function NewVisitPage({ searchParams }: { searchParams?: { patien
       <VisitForm
         initialVisit={{
           patient_id: searchParams?.patient_id ?? '',
-          visit_type: 'basal',
-          visit_status: 'pendiente'
+          visit_type: 'baseline',
+          visit_status: 'scheduled'
         }}
       />
     </AppShell>
