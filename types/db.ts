@@ -19,6 +19,7 @@ export interface Visit {
   id: string;
   patient_id: string;
   visit_type: VisitType;
+  visit_number: number | null;
   scheduled_date: string | null;
   visit_date: string | null;
   visit_status: string;
