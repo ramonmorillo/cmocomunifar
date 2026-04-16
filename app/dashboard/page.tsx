@@ -2,33 +2,27 @@
 
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/layout/AppShell';
-import { supabase } from '@/lib/supabaseClient';
+import { getDashboardMetrics, type DashboardMetrics } from '@/lib/repositories/dashboardRepo';
 
-interface Metrics {
-  patients: number;
-  visits: number;
-  pendingVisits: number;
-  extraordinaryVisits: number;
-}
+const initialMetrics: DashboardMetrics = {
+  patients: 0,
+  visits: 0,
+  pendingVisits: 0,
+  extraordinaryVisits: 0
+};
 
 export default function DashboardPage() {
-  const [metrics, setMetrics] = useState<Metrics>({ patients: 0, visits: 0, pendingVisits: 0, extraordinaryVisits: 0 });
+  const [metrics, setMetrics] = useState<DashboardMetrics>(initialMetrics);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadMetrics = async () => {
-      const [{ count: patients }, { count: visits }, { count: pending }, { count: extraordinary }] = await Promise.all([
-        supabase.from('patients').select('*', { count: 'exact', head: true }),
-        supabase.from('visits').select('*', { count: 'exact', head: true }),
-        supabase.from('visits').select('*', { count: 'exact', head: true }).eq('visit_status', 'pendiente'),
-        supabase.from('visits').select('*', { count: 'exact', head: true }).eq('visit_type', 'extraordinaria')
-      ]);
-
-      setMetrics({
-        patients: patients ?? 0,
-        visits: visits ?? 0,
-        pendingVisits: pending ?? 0,
-        extraordinaryVisits: extraordinary ?? 0
-      });
+      try {
+        const data = await getDashboardMetrics();
+        setMetrics(data);
+      } catch (loadError) {
+        setError(loadError instanceof Error ? loadError.message : 'No se pudieron cargar las métricas.');
+      }
     };
 
     void loadMetrics();
@@ -36,6 +30,7 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
+      {error && <p style={{ color: '#b42318' }}>{error}</p>}
       <div className="grid grid-2">
         <article className="card"><h3>Pacientes</h3><p>{metrics.patients}</p></article>
         <article className="card"><h3>Visitas totales</h3><p>{metrics.visits}</p></article>
