@@ -26,8 +26,32 @@ export async function getPatientById(id: string) {
 }
 
 // Estructura mínima preparada para siguiente bloque.
-export async function createPatient(input: Partial<PatientInput>) {
-  const { data, error } = await supabase.from(TABLE).insert(input).select('*').single();
+export async function createPatient(input: PatientInput) {
+  const { data, error } = await supabase
+    .from(TABLE)
+    .insert({
+      study_code: input.study_code,
+      pharmacy_site: input.pharmacy_site,
+      investigator_name: input.investigator_name,
+      inclusion_date: input.inclusion_date,
+      screening_date: input.screening_date,
+      birth_date: input.birth_date,
+      age_at_inclusion: input.age_at_inclusion,
+      sex: input.sex,
+      consent_signed: input.consent_signed,
+      inclusion_ok: input.inclusion_ok,
+      exclusion_reason: input.exclusion_reason,
+      cardiovascular_disease_established: input.cardiovascular_disease_established,
+      hypertension: input.hypertension,
+      dyslipidemia: input.dyslipidemia,
+      diabetes: input.diabetes,
+      chronic_kidney_disease: input.chronic_kidney_disease,
+      obesity: input.obesity,
+      recruitment_status: input.recruitment_status,
+      notes: input.notes
+    })
+    .select('*')
+    .single();
 
   throwIfSupabaseError(error);
 
