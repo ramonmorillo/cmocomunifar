@@ -1,68 +1,39 @@
-# CMO-RCV Study
+Quiero construir la primera versión de una aplicación web llamada CMO-RCV Study.
 
-Aplicación web para investigación clínica longitudinal en farmacia comunitaria, conectada a Supabase.
+Contexto:
+- El backend es Supabase.
+- El esquema SQL ya está creado y guardado en el repositorio.
+- Lee README.md y AGENTS.md antes de hacer cambios.
 
-## Arquitectura propuesta
+Objetivo de esta primera iteración:
+Crear un flujo mínimo funcional con:
+1. Login
+2. Dashboard simple
+3. Listado de pacientes
+4. Crear paciente
+5. Ficha de paciente
+6. Crear visita
 
-- **Frontend:** Next.js (App Router + TypeScript), diseño sobrio y modular.
-- **Backend:** Supabase (PostgreSQL, Auth, RLS, vistas de exportación).
-- **Modelo de datos:** núcleo en `patients` + `visits`, con tablas satélite por bloques de formulario.
-- **Extensibilidad CMO:** módulo `lib/cmo` y tabla `cmo_config` para reglas futuras sin romper histórico.
+Requisitos:
+- Usa la base de datos existente, no cambies el esquema.
+- No implementes todavía lógica avanzada CMO.
+- No implementes todavía exportación.
+- Código claro y modular.
+- Interfaz sencilla y usable en ordenador.
 
-## Estructura de carpetas
+En la ficha del paciente quiero ver:
+- datos básicos
+- cronología de visitas
+- botón para crear nueva visita
 
-```txt
-app/
-  login/                # autenticación
-  dashboard/            # métricas básicas
-  patients/             # listado y ficha paciente
-  visits/new/           # alta de visita
-  visits/[id]/edit/     # edición de visita
-  export/               # exportación CSV
-components/
-  layout/               # shell principal
-  forms/                # bloques reutilizables de formularios
-  visits/               # formulario de visita
-lib/
-  supabaseClient.ts     # cliente Supabase
-  cmo/config.ts         # preparación módulo futuro CMO
-types/
-  db.ts                 # tipos base
-supabase/migrations/
-  20260416_initial_schema.sql
-```
+En crear visita usar los campos:
+- patient_id
+- visit_type
+- visit_number
+- scheduled_date
+- visit_date
+- visit_status
+- extraordinary_reason
+- notes
 
-## SQL inicial Supabase
-
-El script inicial está en:
-
-- `supabase/migrations/20260416_initial_schema.sql`
-
-Incluye:
-
-- tablas: `patients`, `visits`, `clinical_assessments`, `medication_records`, `patient_reported_outcomes`, `interventions`, `coordination_events`, `feasibility_metrics`, `cmo_config`, `profiles`.
-- restricciones básicas y claves foráneas.
-- `view export_dataset` para exportación longitudinal CSV/SPSS/R.
-- políticas RLS baseline para usuarios autenticados.
-
-## Arranque local
-
-1. Crear `.env.local`:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=...
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-```
-
-2. Instalar y ejecutar:
-
-```bash
-npm install
-npm run dev
-```
-
-3. Aplicar migración SQL en Supabase (SQL Editor o CLI).
-
----
-
-> Nota: la estratificación clínica CMO **no** se implementa aún por diseño; solo se deja preparada su configuración futura.
+Empieza proponiendo estructura del proyecto y archivos a crear antes de escribir el código.
