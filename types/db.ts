@@ -1,4 +1,4 @@
-export type VisitType = 'basal' | 'm3' | 'm6' | 'm9' | 'm12' | 'extraordinaria';
+export type VisitType = 'baseline' | 'month_3' | 'month_6' | 'month_9' | 'month_12' | 'extra';
 
 export type SexType = 'male' | 'female' | 'other' | 'unknown';
 export type YesNoUnknown = 'yes' | 'no' | 'unknown';

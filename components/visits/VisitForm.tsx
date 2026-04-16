@@ -12,7 +12,7 @@ interface VisitFormProps {
   visitId?: string;
 }
 
-const visitTypes: VisitType[] = ['basal', 'm3', 'm6', 'm9', 'm12', 'extraordinaria'];
+const visitTypes: VisitType[] = ['baseline', 'month_3', 'month_6', 'month_9', 'month_12', 'extra'];
 
 export function VisitForm({ initialVisit = {}, visitId }: VisitFormProps) {
   const router = useRouter();
@@ -22,17 +22,33 @@ export function VisitForm({ initialVisit = {}, visitId }: VisitFormProps) {
 
   const save = async () => {
     setError('');
+
+    if (!visit.patient_id?.trim()) {
+      setError('El campo patient_id es obligatorio.');
+      return;
+    }
+
+    if (!visit.visit_type) {
+      setError('Selecciona un tipo de visita.');
+      return;
+    }
+
+    if (!visit.visit_status?.trim()) {
+      setError('El campo visit_status es obligatorio.');
+      return;
+    }
+
     setSaving(true);
 
     const payload = {
-      patient_id: visit.patient_id,
+      patient_id: visit.patient_id.trim(),
       visit_type: visit.visit_type,
-      visit_number: visit.visit_number,
-      scheduled_date: visit.scheduled_date,
-      visit_date: visit.visit_date,
-      visit_status: visit.visit_status,
-      extraordinary_reason: visit.extraordinary_reason,
-      notes: visit.notes
+      visit_number: visit.visit_number ?? null,
+      scheduled_date: visit.scheduled_date || null,
+      visit_date: visit.visit_date || null,
+      visit_status: visit.visit_status.trim(),
+      extraordinary_reason: visit.extraordinary_reason?.trim() || null,
+      notes: visit.notes?.trim() || null
     };
 
     try {
@@ -63,7 +79,7 @@ export function VisitForm({ initialVisit = {}, visitId }: VisitFormProps) {
         <label>
           <span className="small">Tipo de visita</span>
           <select
-            value={visit.visit_type ?? 'basal'}
+            value={visit.visit_type ?? 'baseline'}
             onChange={(e) => setVisit({ ...visit, visit_type: e.target.value as VisitType })}
           >
             {visitTypes.map((value) => (
@@ -97,7 +113,7 @@ export function VisitForm({ initialVisit = {}, visitId }: VisitFormProps) {
 
         <FormField
           label="Estado de visita"
-          value={visit.visit_status ?? 'pendiente'}
+          value={visit.visit_status ?? 'scheduled'}
           onChange={(e) => setVisit({ ...visit, visit_status: e.target.value })}
         />
 
