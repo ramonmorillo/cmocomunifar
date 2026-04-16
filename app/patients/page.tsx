@@ -34,30 +34,36 @@ export default function PatientsPage() {
 
         {error && <p style={{ color: '#b42318' }}>{error}</p>}
 
-        <table>
-          <thead>
-            <tr>
-              <th>Código estudio</th>
-              <th>Fecha inclusión</th>
-              <th>Sede</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.map((patient) => (
-              <tr key={patient.id}>
-                <td>{patient.study_code}</td>
-                <td>{formatDate(patient.inclusion_date)}</td>
-                <td>{patient.pharmacy_site ?? '—'}</td>
-                <td>{patient.recruitment_status}</td>
-                <td>
-                  <Link href={`/patients/${patient.id}`}>Abrir ficha</Link>
-                </td>
+        {!error && patients.length === 0 && <p>No hay pacientes registrados todavía.</p>}
+
+        {patients.length > 0 && (
+          <table>
+            <thead>
+              <tr>
+                <th>Código estudio</th>
+                <th>Fecha inclusión</th>
+                <th>Sede</th>
+                <th>Investigador</th>
+                <th>Estado</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {patients.map((patient) => (
+                <tr key={patient.id}>
+                  <td>{patient.study_code}</td>
+                  <td>{formatDate(patient.inclusion_date)}</td>
+                  <td>{patient.pharmacy_site ?? '—'}</td>
+                  <td>{patient.investigator_name ?? '—'}</td>
+                  <td>{patient.recruitment_status}</td>
+                  <td>
+                    <Link href={`/patients/${patient.id}`}>Abrir ficha</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </AppShell>
   );

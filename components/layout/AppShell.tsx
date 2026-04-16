@@ -5,8 +5,7 @@ import { routes } from '@/lib/routes';
 const links = [
   { href: routes.dashboard, label: 'Dashboard' },
   { href: routes.patients, label: 'Pacientes' },
-  { href: routes.patientNew, label: 'Nuevo paciente' },
-  { href: routes.visitNew, label: 'Nueva visita' }
+  { href: routes.patientNew, label: 'Nuevo paciente' }
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

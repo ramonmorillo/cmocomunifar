@@ -1,17 +1,36 @@
 export type VisitType = 'basal' | 'm3' | 'm6' | 'm9' | 'm12' | 'extraordinaria';
 
+export type SexType = 'male' | 'female' | 'other' | 'unknown';
+export type YesNoUnknown = 'yes' | 'no' | 'unknown';
+export type RecruitmentStatus =
+  | 'screening'
+  | 'included'
+  | 'active'
+  | 'completed'
+  | 'withdrawn'
+  | 'lost_to_follow_up'
+  | 'excluded';
+
 export interface Patient {
   id: string;
   study_code: string;
-  inclusion_date: string;
-  birth_date: string | null;
-  sex: 'M' | 'F' | 'O' | null;
   pharmacy_site: string | null;
   investigator_name: string | null;
+  inclusion_date: string | null;
+  screening_date: string | null;
+  birth_date: string | null;
+  age_at_inclusion: number | null;
+  sex: SexType;
   consent_signed: boolean;
   inclusion_ok: boolean;
   exclusion_reason: string | null;
-  recruitment_status: string;
+  cardiovascular_disease_established: YesNoUnknown;
+  hypertension: YesNoUnknown;
+  dyslipidemia: YesNoUnknown;
+  diabetes: YesNoUnknown;
+  chronic_kidney_disease: YesNoUnknown;
+  obesity: YesNoUnknown;
+  recruitment_status: RecruitmentStatus;
   notes: string | null;
 }
 

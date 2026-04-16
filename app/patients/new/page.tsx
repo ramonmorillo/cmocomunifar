@@ -5,7 +5,7 @@ export default function NewPatientPage() {
   return (
     <AppShell>
       <h2>Nuevo paciente</h2>
-      <PatientForm mode="create" />
+      <PatientForm />
     </AppShell>
   );
 }
