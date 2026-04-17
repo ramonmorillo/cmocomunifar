@@ -26,6 +26,7 @@ npm run dev
 
 ## Build estática para GitHub Pages
 ```bash
+npm install
 npm run build
 ```
 
@@ -35,14 +36,14 @@ Este comando:
 - crea `docs/.nojekyll`
 
 ## Publicación manual en GitHub Pages (sin workflows)
-1. Ejecutar `npm run build`.
+1. Ejecutar `npm install` y luego `npm run build`.
 2. Confirmar que `docs/index.html` y `docs/.nojekyll` existen.
 3. Verificar que en `docs/index.html` los bundles se cargan desde `/cmocomunifar/assets/...`.
 4. Commit y push al repositorio.
 5. En GitHub: **Settings → Pages**.
 6. En **Build and deployment** seleccionar:
    - **Source**: Deploy from a branch
-   - **Branch**: rama principal
+   - **Branch**: `main`
    - **Folder**: `/docs`
 7. Guardar y esperar la publicación.
 
