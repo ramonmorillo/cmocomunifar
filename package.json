@@ -1,25 +1,24 @@
 {
   "name": "cmo-rcv-study",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
-    "next": "14.2.5",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.1"
   },
   "devDependencies": {
-    "@types/node": "20.14.12",
-    "@types/react": "18.3.3",
-    "@types/react-dom": "18.3.0",
-    "eslint": "8.57.0",
-    "eslint-config-next": "14.2.5",
-    "typescript": "5.5.4"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.19"
   }
 }

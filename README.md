@@ -1,39 +1,53 @@
-Quiero construir la primera versión de una aplicación web llamada CMO-RCV Study.
+# CMO-RCV Study (SPA estática con Vite + Supabase)
 
-Contexto:
-- El backend es Supabase.
-- El esquema SQL ya está creado y guardado en el repositorio.
-- Lee README.md y AGENTS.md antes de hacer cambios.
+Aplicación web ligera para seguimiento longitudinal de pacientes con riesgo cardiovascular en farmacia comunitaria.
 
-Objetivo de esta primera iteración:
-Crear un flujo mínimo funcional con:
-1. Login
-2. Dashboard simple
-3. Listado de pacientes
-4. Crear paciente
-5. Ficha de paciente
-6. Crear visita
+## Stack
+- React + TypeScript + Vite
+- Supabase (Auth + tablas existentes)
+- Publicación estática en GitHub Pages desde `docs/`
 
-Requisitos:
-- Usa la base de datos existente, no cambies el esquema.
-- No implementes todavía lógica avanzada CMO.
-- No implementes todavía exportación.
-- Código claro y modular.
-- Interfaz sencilla y usable en ordenador.
+## Variables de entorno
+Crear un archivo `.env.local` (o `.env`) con:
 
-En la ficha del paciente quiero ver:
-- datos básicos
-- cronología de visitas
-- botón para crear nueva visita
+```bash
+VITE_SUPABASE_URL=TU_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY=TU_SUPABASE_ANON_KEY
+```
 
-En crear visita usar los campos:
-- patient_id
-- visit_type
-- visit_number
-- scheduled_date
-- visit_date
-- visit_status
-- extraordinary_reason
-- notes
+## Desarrollo local
+```bash
+npm install
+npm run dev
+```
 
-Empieza proponiendo estructura del proyecto y archivos a crear antes de escribir el código.
+## Build estática para GitHub Pages
+```bash
+npm run build
+```
+
+Este comando genera la SPA en `docs/` y también incluye `.nojekyll`.
+
+## Publicación manual en GitHub Pages (sin workflows)
+1. Ejecutar `npm run build`.
+2. Confirmar que `docs/index.html` y `docs/.nojekyll` existen.
+3. Commit y push al repositorio.
+4. En GitHub: **Settings → Pages**.
+5. En **Build and deployment** seleccionar:
+   - **Source**: Deploy from a branch
+   - **Branch**: rama principal
+   - **Folder**: `/docs`
+6. Guardar y esperar la publicación.
+
+## Flujo mínimo implementado
+- Login (`/login`)
+- Listado de pacientes (`/patients`)
+- Alta de paciente (`/patients/new`)
+- Ficha de paciente (`/patients/:id`)
+- Nueva visita de seguimiento (`/patients/:id/follow-up/new`)
+- Nueva visita extraordinaria (`/patients/:id/extra/new`)
+
+## Pendiente intencionadamente
+- Estratificación CMO compleja
+- Lógica clínica avanzada
+- Exportaciones
