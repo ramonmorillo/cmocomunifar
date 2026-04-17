@@ -10,6 +10,7 @@ function MissingConfigScreen() {
   return (
     <main className="page page--narrow">
       <h1>Configuración pendiente</h1>
+      <p className="error">Falta configuración de Supabase</p>
       <p>La aplicación no puede iniciar porque faltan variables de entorno de Supabase.</p>
       <ul className="list">
         {missingVars.map((varName) => (
