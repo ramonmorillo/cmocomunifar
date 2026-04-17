@@ -17,7 +17,7 @@ function MissingConfigScreen() {
           <li key={varName}>Falta {varName}</li>
         ))}
       </ul>
-      <p>Define las variables y vuelve a compilar con <code>npm run build</code>.</p>
+      <p>Define las variables en <code>.env.local</code> y reinicia <code>npm run dev</code>.</p>
     </main>
   );
 }
