@@ -15,6 +15,9 @@ VITE_SUPABASE_URL=TU_SUPABASE_URL
 VITE_SUPABASE_ANON_KEY=TU_SUPABASE_ANON_KEY
 ```
 
+> Importante: `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` **deben existir antes de ejecutar** `npm run build`.
+> Si faltan, la app mostrará una pantalla de configuración pendiente en lugar de una pantalla en blanco.
+
 ## Desarrollo local
 ```bash
 npm install
@@ -26,18 +29,22 @@ npm run dev
 npm run build
 ```
 
-Este comando genera la SPA en `docs/` y también incluye `.nojekyll`.
+Este comando:
+- genera la SPA en `docs/`
+- usa `base: '/cmocomunifar/'` para que los assets apunten a `/cmocomunifar/assets/...`
+- crea `docs/.nojekyll`
 
 ## Publicación manual en GitHub Pages (sin workflows)
 1. Ejecutar `npm run build`.
 2. Confirmar que `docs/index.html` y `docs/.nojekyll` existen.
-3. Commit y push al repositorio.
-4. En GitHub: **Settings → Pages**.
-5. En **Build and deployment** seleccionar:
+3. Verificar que en `docs/index.html` los bundles se cargan desde `/cmocomunifar/assets/...`.
+4. Commit y push al repositorio.
+5. En GitHub: **Settings → Pages**.
+6. En **Build and deployment** seleccionar:
    - **Source**: Deploy from a branch
    - **Branch**: rama principal
    - **Folder**: `/docs`
-6. Guardar y esperar la publicación.
+7. Guardar y esperar la publicación.
 
 ## Flujo mínimo implementado
 - Login (`/login`)

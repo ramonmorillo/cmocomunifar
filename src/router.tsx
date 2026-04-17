@@ -21,8 +21,10 @@ function ProtectedRoute({ session, children }: { session: Session | null; childr
 }
 
 export function AppRouter({ session, onLogout }: RouterProps) {
+  const basename = import.meta.env.BASE_URL || '/';
+
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter basename={basename}>
       {session ? (
         <nav className="top-nav">
           <Link to="/patients">Pacientes</Link>
@@ -74,6 +76,7 @@ export function AppRouter({ session, onLogout }: RouterProps) {
             </ProtectedRoute>
           }
         />
+        <Route path="*" element={<Navigate to={session ? '/patients' : '/login'} replace />} />
       </Routes>
     </BrowserRouter>
   );

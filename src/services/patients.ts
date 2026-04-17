@@ -1,5 +1,5 @@
 import type { Patient } from '../types/db';
-import { supabase } from '../lib/supabase';
+import { getSupabaseClient } from '../lib/supabase';
 
 export type CreatePatientInput = Pick<
   Patient,
@@ -25,7 +25,7 @@ export type CreatePatientInput = Pick<
 >;
 
 export async function listPatients() {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseClient()
     .from('patients')
     .select('*')
     .order('inclusion_date', { ascending: false, nullsFirst: false });
@@ -35,14 +35,14 @@ export async function listPatients() {
 }
 
 export async function getPatientById(id: string) {
-  const { data, error } = await supabase.from('patients').select('*').eq('id', id).single();
+  const { data, error } = await getSupabaseClient().from('patients').select('*').eq('id', id).single();
 
   if (error) throw error;
   return data as Patient;
 }
 
 export async function createPatient(input: CreatePatientInput) {
-  const { data, error } = await supabase.from('patients').insert(input).select('*').single();
+  const { data, error } = await getSupabaseClient().from('patients').insert(input).select('*').single();
 
   if (error) throw error;
   return data as Patient;
