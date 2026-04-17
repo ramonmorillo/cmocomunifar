@@ -6,6 +6,7 @@ import { NewPatientPage } from './pages/NewPatientPage';
 import { PatientDetailPage } from './pages/PatientDetailPage';
 import { NewFollowUpVisitPage } from './pages/NewFollowUpVisitPage';
 import { NewExtraVisitPage } from './pages/NewExtraVisitPage';
+import { getEnvString } from './lib/env';
 
 type RouterProps = {
   session: Session | null;
@@ -21,7 +22,7 @@ function ProtectedRoute({ session, children }: { session: Session | null; childr
 }
 
 export function AppRouter({ session, onLogout }: RouterProps) {
-  const basename = import.meta.env.BASE_URL || '/';
+  const basename = getEnvString('BASE_URL') || '/';
 
   return (
     <BrowserRouter basename={basename}>
